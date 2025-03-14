@@ -1,3 +1,3 @@
-AmorNotes
-<br>
+# AmorNotes
+
 A simplistic note-taking application
