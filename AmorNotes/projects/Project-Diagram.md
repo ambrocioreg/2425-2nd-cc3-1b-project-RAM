@@ -1,4 +1,4 @@
-`` mermaid
+``` mermaid
 ---
 title: Note Taking App
 --
