@@ -1,9 +1,9 @@
 ``` mermaid
 ---
 title: Note Taking App
---
-
+---
 classDiagram
+
     class MainUi{
         + title : String
         - ArrayList<String> : addButton
