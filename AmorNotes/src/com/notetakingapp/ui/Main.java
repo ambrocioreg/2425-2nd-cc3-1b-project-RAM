@@ -48,8 +48,8 @@ public class Main extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 5, 0, 5);
         
-        // Sidebar toggle (☰)
-        toggleSidebarButton = new JButton("☰");
+        // Sidebar toggle (=)
+        toggleSidebarButton = new JButton("=");
         toggleSidebarButton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
         toggleSidebarButton.setMargin(new Insets(2, 8, 2, 8));
         gbc.gridx = 0;
@@ -71,8 +71,8 @@ public class Main extends JFrame {
         gbc.anchor = GridBagConstraints.CENTER;
         controlPanel.add(searchBar, gbc);
         
-        // Add Note button (➕)
-        addNoteButton = new JButton("➕");
+        // Add Note button (+)
+        addNoteButton = new JButton("+");
         addNoteButton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
         addNoteButton.setMargin(new Insets(2, 8, 2, 8));
         gbc.gridx = 2;
