@@ -4,7 +4,7 @@ title: Note Taking App
 ---
 classDiagram
 
-    class MainUi{
+    class Main{
         + title : String
         - ArrayList<String> : addButton
         - boolean : searchButton
