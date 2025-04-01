@@ -4,8 +4,7 @@ title: Roadmap
 ---
 flowchart
     %% Documentation
-    A[Project Setup] --> B[Define Domain Model]
-    B --> C[Design Core Application]
+    A[Project Setup] --> C[Design Core Application]
     C --> C1[UML Diagram]
 
     %% UI Development
@@ -31,7 +30,6 @@ flowchart
 
     %% Grouping
     subgraph Documentation [Documentation]
-        B
         C
         C1
     end
