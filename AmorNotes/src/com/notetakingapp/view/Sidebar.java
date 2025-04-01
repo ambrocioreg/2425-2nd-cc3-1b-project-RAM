@@ -1,4 +1,4 @@
-public class Sidebar extends MainUI {
+public class Sidebar extends Main {
     private boolean optionButton;
     private boolean userButton;
 

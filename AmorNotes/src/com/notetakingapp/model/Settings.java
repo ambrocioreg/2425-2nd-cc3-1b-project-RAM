@@ -1,4 +1,4 @@
-public class Settings extends MainUI {
+public class Settings extends Main {
     private boolean toggleUIColor;
     private boolean sync;
 

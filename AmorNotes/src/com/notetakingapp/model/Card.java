@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Card extends MainUI {
+public class Card extends Main {
     String id;
     String Content;
     String date;

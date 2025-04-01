@@ -1,4 +1,4 @@
-public class CloudStorage extends MainUI {
+public class CloudStorage extends Main {
     String storageProvider;
     Boolean IsConnected;
 
