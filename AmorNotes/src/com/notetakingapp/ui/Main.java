@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class MainUI {
+public class Main {
     public String title;
     public ArrayList<String> addButton;
     public boolean searchButton;
@@ -11,7 +11,7 @@ public class MainUI {
     private SearchBar searchBar;
     private Settings settings;
 
-    public MainUI() {
+    public Main() {
         this.sidebar = new Sidebar();
         this.cloudStorage = new CloudStorage();
         this.searchBar = new SearchBar();
@@ -30,7 +30,7 @@ public class MainUI {
 
     
     public static void main(String[] args) {
-        MainUI app = new MainUI();
+        Main app = new Main();
         System.out.println("Amor Notes!");
     }
 }
