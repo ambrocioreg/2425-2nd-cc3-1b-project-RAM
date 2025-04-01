@@ -68,12 +68,12 @@ classDiagram
         + void toggleAutoSync()
     }
 
-    MainUi <|-- Sidebar
-    MainUi <|-- CloudStorage
-    MainUi <|-- Card
-    MainUi <|-- Editor
-    MainUi <|-- Settings
-    MainUi <|-- Searchbar
+    Main <|-- Sidebar
+    Main <|-- CloudStorage
+    Main <|-- Card
+    Main <|-- Editor
+    Main <|-- Settings
+    Main <|-- Searchbar
 
 
 ```
