@@ -13,11 +13,13 @@ flowchart
     D --> E1[Implement Sidebar]
     D --> E2[Implement Searchbar]
     D --> E3[Implement Editor]
+    D --> E4[Implement Card]
 
     %% Frontend Development
     E1 --> F[Implement Settings]
     E2 --> F
     E3 --> F
+    E4 --> F
     M --> F
 
     %% Backend Development
@@ -39,6 +41,7 @@ flowchart
         E1
         E2
         E3
+        E4
     end
 
     subgraph Frontend [Frontend Development]
