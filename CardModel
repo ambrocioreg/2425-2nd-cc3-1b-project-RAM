@@ -1,0 +1,79 @@
+private void addCard(Card card) {
+    if (cards.size() >= 9) {
+        JOptionPane.showMessageDialog(this, "Maximum 9 notes allowed.");
+        return;
+    }
+    cards.add(card);
+    
+    JButton noteButton = new JButton(card.toString());
+    noteButton.setFont(new Font("Arial", Font.PLAIN, 14));
+    noteButton.setBackground(card.getColor());
+    noteButton.setOpaque(true);
+    noteButton.setBorderPainted(false);
+    noteButton.setFocusPainted(false);
+    
+    // Add right-click context menu
+    noteButton.setComponentPopupMenu(createCardPopupMenu(card, noteButton));
+    
+    // Double-click to edit
+    noteButton.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+                editCard(card, noteButton);
+            }
+        }
+    });
+    
+    cardPanel.add(noteButton);
+    cardPanel.revalidate();
+}
+
+private JPopupMenu createCardPopupMenu(Card card, JButton noteButton) {
+    JPopupMenu menu = new JPopupMenu();
+    
+    JMenuItem editItem = new JMenuItem("Edit");
+    editItem.addActionListener(e -> editCard(card, noteButton));
+    
+    JMenuItem colorItem = new JMenuItem("Change Color");
+    colorItem.addActionListener(e -> changeCardColor(card, noteButton));
+    
+    JMenuItem pinItem = new JMenuItem(card.isPinned() ? "Unpin" : "Pin");
+    pinItem.addActionListener(e -> togglePinCard(card, noteButton));
+    
+    JMenuItem deleteItem = new JMenuItem("Delete");
+    deleteItem.addActionListener(e -> deleteCard(card, noteButton));
+    
+    menu.add(editItem);
+    menu.add(colorItem);
+    menu.add(pinItem);
+    menu.addSeparator();
+    menu.add(deleteItem);
+    
+    return menu;
+}
+
+private void editCard(Card card, JButton noteButton) {
+    JDialog editDialog = new JDialog(this, "Edit Note", true);
+    editDialog.setLayout(new BorderLayout());
+    
+    JTextField titleField = new JTextField(card.getTitle());
+    JTextArea contentArea = new JTextArea(card.getContent());
+    contentArea.setLineWrap(true);
+    contentArea.setWrapStyleWord(true);
+    
+    JButton saveButton = new JButton("Save");
+    saveButton.addActionListener(e -> {
+        card.setTitle(titleField.getText());
+        card.setContent(contentArea.getText());
+        noteButton.setText(card.toString());
+        noteButton.setBackground(card.getColor());
+        editDialog.dispose();
+    });
+    
+    editDialog.add(titleField, BorderLayout.NORTH);
+    editDialog.add(new JScrollPane(contentArea), BorderLayout.CENTER);
+    editDialog.add(saveButton, BorderLayout.SOUTH);
+    editDialog.setSize(400, 300);
+    editDialog.setLocationRelativeTo(this);
+    editDialog.setVisible(true);
+}
