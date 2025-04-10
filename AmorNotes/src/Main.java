@@ -1,8 +1,5 @@
-import model.Card;
-import view.CardView;
-import view.Sidebar;
-import view.CardView;
-import view.SearchBar;
+import model.*;
+import view.*;
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.*;
