@@ -1,4 +1,4 @@
-package viewmodel;
+
 
 import view.Sidebar;
 import view.SearchBar;
