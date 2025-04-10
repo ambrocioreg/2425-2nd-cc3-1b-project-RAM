@@ -80,6 +80,10 @@ public class Sidebar {
         cardLabel.setVerticalAlignment(SwingConstants.CENTER); // Center-align text vertically
         cardPanel.add(cardLabel, BorderLayout.CENTER);
 
+        cardListPanel.add(cardPanel);
+        cardListPanel.revalidate();
+        cardListPanel.repaint();
+
         JButton deleteButton = createSidebarButton("x");
         deleteButton.setPreferredSize(new Dimension(30, 30));
         deleteButton.addActionListener(e -> {
@@ -206,4 +210,5 @@ public class Sidebar {
             }
         }
     }
+    
 }

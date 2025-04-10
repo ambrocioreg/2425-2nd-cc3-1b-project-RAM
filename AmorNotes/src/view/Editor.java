@@ -189,7 +189,7 @@ public class Editor extends JPanel {
             }
         }
     }
-
+    
     private void createContextMenu() {
         contextMenu = new JPopupMenu();
 
