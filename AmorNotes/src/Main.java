@@ -1,8 +1,8 @@
-import model.*;
 import view.*;
+import model.*;
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import javax.swing.*;
 
 public class Main extends JFrame {
     private JButton toggleSidebarButton, addNoteButton;

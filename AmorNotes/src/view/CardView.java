@@ -1,45 +1,75 @@
 package view;
-
-import model.Card;
-
+import model.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
+import java.awt.event.*;
 
 public class CardView extends JPanel {
-    private final Card card;
+    private Card card;
+    private JLabel titleLabel;
+    private JTextArea contentArea;
+    private boolean isEditing = false;
 
     public CardView(Card card) {
         this.card = card;
-        setPreferredSize(new Dimension(200, 100));
-        setOpaque(false); // Important for custom rounded painting
+        setLayout(new BorderLayout());
+        setBackground(new Color(255, 255, 255));
+        setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
+
+        titleLabel = new JLabel(card.getTitle());
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        add(titleLabel, BorderLayout.NORTH);
+
+        contentArea = new JTextArea(card.getContent());
+        contentArea.setEditable(false); // Initially not editable
+        contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        contentArea.setBackground(new Color(245, 245, 245));
+        add(new JScrollPane(contentArea), BorderLayout.CENTER);
+
+        // Add Mouse Listener for editing
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (!isEditing) {
+                    enterEditMode();
+                }
+            }
+        });
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    private void enterEditMode() {
+        isEditing = true;
+        contentArea.setEditable(true);
+        contentArea.setBackground(Color.WHITE); // Change background to white for editing
+        titleLabel.setText("Editing: " + card.getTitle()); // Change title to indicate edit mode
 
-        Graphics2D g2 = (Graphics2D) g.create();
+        // Add a save button at the bottom to save changes
+        JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(e -> saveContent());
+        add(saveButton, BorderLayout.SOUTH);
 
-        // Smooth edges
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Revalidate and repaint to refresh the layout
+        revalidate();
+        repaint();
+    }
 
-        // Rounded rectangle
-        Shape roundRect = new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 30, 30);
+    private void saveContent() {
+        card.setContent(contentArea.getText());
+        contentArea.setEditable(false); // Stop editing
+        contentArea.setBackground(new Color(245, 245, 245)); // Reset background
+        titleLabel.setText(card.getTitle()); // Reset title
 
-        // Background color
-        g2.setColor(new Color(225, 205, 180)); // light brown
-        g2.fill(roundRect);
+        // Remove save button
+        remove(getComponentCount() - 1);
 
-        // Draw title
-        g2.setColor(Color.BLACK);
-        g2.setFont(new Font("Arial", Font.BOLD, 16));
-        g2.drawString(card.getTitle(), 15, 25);
+        // Revalidate and repaint to refresh the layout
+        revalidate();
+        repaint();
 
-        // Draw content (if needed)
-        g2.setFont(new Font("Arial", Font.PLAIN, 12));
-        g2.drawString(card.getContent(), 15, 45);
+        isEditing = false; // Exit edit mode
+    }
 
-        g2.dispose();
+    public Card getCard() {
+        return card;
     }
 }
