@@ -85,7 +85,6 @@ public class Main extends JFrame {
         cardPanel.repaint();
     }
 
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Main app = new Main();
