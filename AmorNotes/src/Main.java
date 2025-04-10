@@ -1,15 +1,12 @@
 import view.*;
-import model.*;
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class Main extends JFrame {
-    private JButton toggleSidebarButton, addNoteButton;
-    private JPanel cardPanel;
+    private JButton toggleSidebarButton;
     private Sidebar sidebar;
     private SearchBar searchBar;
-    private ArrayList<Card> cards;
+    private Editor editor; // Added Editor instance
 
     public Main() {
         setTitle("Amor Notes");
@@ -17,71 +14,52 @@ public class Main extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // Editor
+        editor = new Editor(); // Initialize Editor
+        add(editor, BorderLayout.CENTER); // Add Editor to the center
+
         // Sidebar
-        sidebar = new Sidebar(this);
+        sidebar = new Sidebar(this, editor); // Pass the Editor instance to Sidebar
         add(sidebar.getPanel(), BorderLayout.WEST);
 
         // Control Panel (top bar)
-        JPanel controlPanel = new JPanel(new GridBagLayout());
-        controlPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0, 5, 0, 5);
+        JPanel controlPanel = new JPanel(new BorderLayout());
+        controlPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        controlPanel.setBackground(new Color(240, 235, 230));
 
-        // Sidebar toggle (=)
-        toggleSidebarButton = new JButton("=");
-        toggleSidebarButton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
+        // Left section (sidebar toggle and "Notes" label)
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        leftPanel.setBackground(new Color(240, 235, 230));
+
+        toggleSidebarButton = new JButton("☰");
+        toggleSidebarButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         toggleSidebarButton.setMargin(new Insets(2, 8, 2, 8));
         toggleSidebarButton.addActionListener(e -> sidebar.toggleSidebar());
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        controlPanel.add(toggleSidebarButton, gbc);
+        leftPanel.add(toggleSidebarButton);
 
-        // Search bar
+        JLabel notesLabel = new JLabel("Notes");
+        notesLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        leftPanel.add(notesLabel);
+
+        controlPanel.add(leftPanel, BorderLayout.WEST);
+
+        // Right section (search bar)
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        rightPanel.setBackground(new Color(240, 235, 230));
+
         searchBar = new SearchBar(this);
-        gbc.gridx = 1;
-        gbc.weightx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.CENTER;
-        controlPanel.add(searchBar.getTextField(), gbc);
+        searchBar.getTextField().setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        rightPanel.add(searchBar.getTextField());
 
-        // Add Note button (+)
-        addNoteButton = new JButton("+");
-        addNoteButton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
-        addNoteButton.setMargin(new Insets(2, 8, 2, 8));
-        addNoteButton.addActionListener(e -> addCard(new Card("Note " + (cards.size() + 1))));
-        gbc.gridx = 2;
-        gbc.weightx = 0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.EAST;
-        controlPanel.add(addNoteButton, gbc);
+        controlPanel.add(rightPanel, BorderLayout.EAST);
 
         add(controlPanel, BorderLayout.NORTH);
 
-        // Card Panel (3x3 grid)
-        cardPanel = new JPanel(new GridLayout(3, 3, 10, 10));
-        cardPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        cardPanel.setBackground(new Color(240, 235, 230));
-        add(cardPanel, BorderLayout.CENTER);
-
-        cards = new ArrayList<>();
+        // Removed cardPanel and card-related logic
     }
 
-    private void addCard(Card card) {
-        if (cards.size() >= 9) {
-            JOptionPane.showMessageDialog(this, "Maximum 9 notes allowed.");
-            return;
-        }
-
-        cards.add(card);
-
-        // Replace JButton with your custom CardView
-        CardView view = new CardView(card);
-        cardPanel.add(view);
-
-        // Repaint and revalidate to refresh layout
-        cardPanel.revalidate();
-        cardPanel.repaint();
+    public Editor getEditor() {
+        return editor; // Provide access to the Editor instance
     }
 
     public static void main(String[] args) {
@@ -89,9 +67,5 @@ public class Main extends JFrame {
             Main app = new Main();
             app.setVisible(true);
         });
-    }
-
-    public JPanel getCardPanel() {
-        return cardPanel;
     }
 }
