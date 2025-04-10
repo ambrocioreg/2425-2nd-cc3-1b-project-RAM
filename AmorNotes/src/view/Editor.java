@@ -7,6 +7,7 @@ import java.awt.*;
 import javax.swing.undo.*; // Import for undo/redo functionality
 import java.io.*; // Import for file handling
 import javax.swing.text.*; // Import for rich text features
+import java.awt.event.*; // Import for keyboard shortcuts
 
 public class Editor extends JPanel {
     private JLabel titleLabel; // Ensure this is declared
@@ -38,6 +39,50 @@ public class Editor extends JPanel {
 
         createContextMenu();
         contentArea.setComponentPopupMenu(contextMenu);
+
+        // Add keyboard shortcuts
+        InputMap inputMap = contentArea.getInputMap(JComponent.WHEN_FOCUSED);
+        ActionMap actionMap = contentArea.getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK), "toggleBold");
+        actionMap.put("toggleBold", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                toggleBold();
+            }
+        });
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK), "toggleItalic");
+        actionMap.put("toggleItalic", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                toggleItalic();
+            }
+        });
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK), "toggleUnderline");
+        actionMap.put("toggleUnderline", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                toggleUnderline();
+            }
+        });
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), "undoAction");
+        actionMap.put("undoAction", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                undoAction();
+            }
+        });
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK), "redoAction");
+        actionMap.put("redoAction", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                redoAction();
+            }
+        });
     }
 
     @Override
