@@ -1,4 +1,7 @@
+import model.Card;
+import view.CardView;
 import view.Sidebar;
+import view.CardView;
 import view.SearchBar;
 import java.awt.*;
 import java.util.ArrayList;
@@ -73,16 +76,18 @@ public class Main extends JFrame {
             JOptionPane.showMessageDialog(this, "Maximum 9 notes allowed.");
             return;
         }
+
         cards.add(card);
-        JButton noteButton = new JButton(card.getTitle());
-        noteButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        noteButton.setBackground(LIGHT_BROWN);
-        noteButton.setOpaque(true);
-        noteButton.setBorderPainted(false);
-        noteButton.setFocusPainted(false);
-        cardPanel.add(noteButton);
+
+        // Replace JButton with your custom CardView
+        CardView view = new CardView(card);
+        cardPanel.add(view);
+
+        // Repaint and revalidate to refresh layout
         cardPanel.revalidate();
+        cardPanel.repaint();
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -94,10 +99,4 @@ public class Main extends JFrame {
     public JPanel getCardPanel() {
         return cardPanel;
     }
-}
-
-class Card {
-    private String title;
-    public Card(String title) { this.title = title; }
-    public String getTitle() { return title; }
 }

@@ -7,11 +7,12 @@ public class Card {
 
     public Card(String title) {
         this.title = title;
-        this.content = "";
+        this.content = ""; // Default empty content
     }
 
     public boolean containsText(String query) {
-        return title.toLowerCase().contains(query) || content.toLowerCase().contains(query);
+        return title.toLowerCase().contains(query.toLowerCase()) ||
+               content.toLowerCase().contains(query.toLowerCase());
     }
 
     @Override
@@ -22,6 +23,7 @@ public class Card {
     // Getters and setters
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
+
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 }
