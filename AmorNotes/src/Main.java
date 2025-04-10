@@ -1,7 +1,6 @@
 import view.*;
 import viewmodel.*;
 import javax.swing.*;
-
 import java.awt.*;
 
 public class Main extends JFrame {
@@ -19,6 +18,8 @@ public class Main extends JFrame {
 
         // Center the window on the screen
         setLocationRelativeTo(null);
+
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Start maximized
 
         settingsViewModel = new SettingsViewModel(); // Initialize SettingsViewModel
 
@@ -40,7 +41,7 @@ public class Main extends JFrame {
         leftPanel.setBackground(new Color(240, 240, 240)); // Light Gray
 
         toggleSidebarButton = new JButton("☰");
-        toggleSidebarButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        toggleSidebarButton.setFont(new Font("Arial Unicode MS", Font.PLAIN, 16));
         toggleSidebarButton.setMargin(new Insets(2, 8, 2, 8));
         toggleSidebarButton.addActionListener(e -> sidebar.toggleSidebar());
         leftPanel.add(toggleSidebarButton);

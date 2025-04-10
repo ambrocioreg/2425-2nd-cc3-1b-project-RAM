@@ -159,10 +159,19 @@ public class Sidebar {
     // Display settings dialog when the settings button is clicked
     private void showSettings(JFrame parent) {
         JDialog settingsDialog = new JDialog(parent, "Settings", true);
-        settingsDialog.setSize(300, 200);
+        settingsDialog.setSize(960, 540);
         settingsDialog.setLayout(new BorderLayout());
 
         JPanel settingsPanel = settingsViewModel.createSettingsPanel(parent); // Delegate to SettingsViewModel
+        settingsDialog.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Dimension newSize = settingsDialog.getSize();
+                int fontSize = Math.min(30, 10 + (newSize.width / 100)); // Adjust font size proportionally to dialog width
+                updateFontSize(settingsPanel, fontSize);
+                settingsPanel.revalidate();
+            }
+        });
 
         // Close button
         JButton closeButton = new JButton("Close");
@@ -174,5 +183,16 @@ public class Sidebar {
         settingsDialog.add(closeButton, BorderLayout.SOUTH);
         settingsDialog.setLocationRelativeTo(parent);
         settingsDialog.setVisible(true);
+    }
+
+    private void updateFontSize(Component component, int fontSize) {
+        if (component instanceof JComponent) {
+            ((JComponent) component).setFont(new Font("Segoe UI", Font.PLAIN, fontSize));
+        }
+        if (component instanceof Container) {
+            for (Component child : ((Container) component).getComponents()) {
+                updateFontSize(child, fontSize);
+            }
+        }
     }
 }

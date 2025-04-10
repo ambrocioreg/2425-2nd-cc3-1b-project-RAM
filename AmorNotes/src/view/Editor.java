@@ -6,13 +6,14 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.undo.*; // Import for undo/redo functionality
 import java.io.*; // Import for file handling
+import javax.swing.text.*; // Import for rich text features
 
 public class Editor extends JPanel {
     private JLabel titleLabel; // Ensure this is declared
-    private JTextArea contentArea;
+    private JTextPane contentArea;
     private Card currentCard;
-    private JToolBar toolBar;
     private UndoManager undoManager;
+    private JPopupMenu contextMenu;
     
     public Editor(SettingsViewModel settingsViewModel) {
         setLayout(new BorderLayout());
@@ -24,17 +25,8 @@ public class Editor extends JPanel {
         titleLabel.setForeground(Color.BLACK);
         // Add titleLabel to the appropriate panel or layout
 
-        toolBar = new JToolBar();
-        toolBar.setFloatable(false); // Disable floating
-        toolBar.setBackground(new Color(240, 240, 245)); // Soft Gray-Blue
-        toolBar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Add padding
-        addFormattingButtons();
-        add(toolBar, BorderLayout.SOUTH);
-
-        contentArea = new JTextArea("Notes...");
+        contentArea = new JTextPane();
         contentArea.setFont(new Font("Segoe UI", Font.PLAIN, settingsViewModel.getDefaultFontSize())); // Use default font size
-        contentArea.setLineWrap(true);
-        contentArea.setWrapStyleWord(true);
         contentArea.setMargin(new Insets(30, 30, 30, 30)); // Increased padding (top, left, bottom, right)
         contentArea.setBackground(Color.WHITE); // White background
         contentArea.setForeground(Color.BLACK); // Black text
@@ -43,6 +35,9 @@ public class Editor extends JPanel {
 
         undoManager = new UndoManager();
         contentArea.getDocument().addUndoableEditListener(e -> undoManager.addEdit(e.getEdit()));
+
+        createContextMenu();
+        contentArea.setComponentPopupMenu(contextMenu);
     }
 
     @Override
@@ -56,109 +51,47 @@ public class Editor extends JPanel {
         g2d.fillRect(0, 0, getWidth(), getHeight());
     }
 
-    private void addFormattingButtons() {
-        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5)); // Set layout with margins and spacing
-
-        JButton boldButton = createStyledButton("B");
-        boldButton.addActionListener(e -> toggleBold());
-        toolBar.add(boldButton);
-
-        JButton italicButton = createStyledButton("I");
-        italicButton.addActionListener(e -> toggleItalic());
-        toolBar.add(italicButton);
-
-        JButton underlineButton = createStyledButton("U");
-        underlineButton.addActionListener(e -> toggleUnderline());
-        toolBar.add(underlineButton);
-
-        toolBar.addSeparator(new Dimension(10, 0)); // Add spacing
-
-        JButton alignLeftButton = createStyledButton("L");
-        alignLeftButton.addActionListener(e -> alignText(SwingConstants.LEFT));
-        toolBar.add(alignLeftButton);
-
-        JButton alignCenterButton = createStyledButton("C");
-        alignCenterButton.addActionListener(e -> alignText(SwingConstants.CENTER));
-        toolBar.add(alignCenterButton);
-
-        JButton alignRightButton = createStyledButton("R");
-        alignRightButton.addActionListener(e -> alignText(SwingConstants.RIGHT));
-        toolBar.add(alignRightButton);
-
-        toolBar.addSeparator(new Dimension(10, 0)); // Add spacing
-
-        JButton colorButton = createStyledButton("Color");
-        colorButton.addActionListener(e -> changeTextColor());
-        toolBar.add(colorButton);
-
-        toolBar.addSeparator(new Dimension(10, 0)); // Add spacing
-
-        JButton undoButton = createStyledButton("Undo");
-        undoButton.addActionListener(e -> undoAction());
-        toolBar.add(undoButton);
-
-        JButton redoButton = createStyledButton("Redo");
-        redoButton.addActionListener(e -> redoAction());
-        toolBar.add(redoButton);
-
-        toolBar.addSeparator(new Dimension(10, 0)); // Add spacing
-
-        JComboBox<String> fontSizeBox = new JComboBox<>(new String[]{"12", "14", "16", "18", "20", "24", "28", "32"});
-        fontSizeBox.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        fontSizeBox.addActionListener(e -> changeFontSize((String) fontSizeBox.getSelectedItem()));
-        toolBar.add(fontSizeBox);
-
-        JComboBox<String> fontFamilyBox = new JComboBox<>(GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getAvailableFontFamilyNames());
-        fontFamilyBox.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        fontFamilyBox.addActionListener(e -> changeFontFamily((String) fontFamilyBox.getSelectedItem()));
-        toolBar.add(fontFamilyBox);
-
-        toolBar.addSeparator(new Dimension(10, 0)); // Add spacing
-
-        JButton openButton = createStyledButton("Open");
-        openButton.addActionListener(e -> openFile());
-        toolBar.add(openButton);
-
-        JButton saveButton = createStyledButton("Save");
-        saveButton.addActionListener(e -> saveToFile());
-        toolBar.add(saveButton);
-    }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        button.setBackground(new Color(240, 240, 240)); // Light gray background
-        button.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200))); // Border
-        button.setPreferredSize(new Dimension(50, 30)); // Set button size
-        return button;
-    }
-
     private void toggleBold() {
-        Font currentFont = contentArea.getFont();
-        contentArea.setFont(currentFont.deriveFont(currentFont.getStyle() ^ Font.BOLD));
+        StyledDocument doc = contentArea.getStyledDocument();
+        SimpleAttributeSet attrs = new SimpleAttributeSet();
+        StyleConstants.setBold(attrs, !StyleConstants.isBold(contentArea.getCharacterAttributes()));
+        doc.setCharacterAttributes(contentArea.getSelectionStart(), contentArea.getSelectionEnd() - contentArea.getSelectionStart(), attrs, false);
     }
 
     private void toggleItalic() {
-        Font currentFont = contentArea.getFont();
-        contentArea.setFont(currentFont.deriveFont(currentFont.getStyle() ^ Font.ITALIC));
+        StyledDocument doc = contentArea.getStyledDocument();
+        SimpleAttributeSet attrs = new SimpleAttributeSet();
+        StyleConstants.setItalic(attrs, !StyleConstants.isItalic(contentArea.getCharacterAttributes()));
+        doc.setCharacterAttributes(contentArea.getSelectionStart(), contentArea.getSelectionEnd() - contentArea.getSelectionStart(), attrs, false);
     }
 
     private void toggleUnderline() {
-        // Underline is not directly supported by JTextArea, so this is a placeholder.
-        JOptionPane.showMessageDialog(this, "Underline is not supported in plain text.");
+        StyledDocument doc = contentArea.getStyledDocument();
+        SimpleAttributeSet attrs = new SimpleAttributeSet();
+        StyleConstants.setUnderline(attrs, !StyleConstants.isUnderline(contentArea.getCharacterAttributes()));
+        doc.setCharacterAttributes(contentArea.getSelectionStart(), contentArea.getSelectionEnd() - contentArea.getSelectionStart(), attrs, false);
     }
 
     private void alignText(int alignment) {
-        // Placeholder: JTextArea does not support alignment directly.
-        JOptionPane.showMessageDialog(this, "Text alignment is not supported in plain text.");
+        StyledDocument doc = contentArea.getStyledDocument();
+        SimpleAttributeSet attrs = new SimpleAttributeSet();
+        StyleConstants.setAlignment(attrs, alignment);
+        doc.setParagraphAttributes(contentArea.getSelectionStart(), contentArea.getSelectionEnd() - contentArea.getSelectionStart(), attrs, true);
     }
 
     private void changeTextColor() {
-        Color selectedColor = JColorChooser.showDialog(this, "Choose Text Color", contentArea.getForeground());
-        if (selectedColor != null) {
-            contentArea.setForeground(selectedColor);
+        JColorChooser colorChooser = new JColorChooser(contentArea.getForeground());
+        for (Component comp : colorChooser.getComponents()) {
+            comp.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // Increase font size
         }
+        JDialog dialog = JColorChooser.createDialog(this, "Choose Text Color", true, colorChooser, e -> {
+            Color selectedColor = colorChooser.getColor();
+            if (selectedColor != null) {
+                contentArea.setForeground(selectedColor);
+            }
+        }, null);
+        dialog.setSize(600, 400); // Increase dialog size
+        dialog.setVisible(true);
     }
 
     private void undoAction() {
@@ -175,13 +108,10 @@ public class Editor extends JPanel {
 
     private void changeFontSize(String size) {
         int fontSize = Integer.parseInt(size);
-        Font currentFont = contentArea.getFont();
-        contentArea.setFont(new Font(currentFont.getFontName(), currentFont.getStyle(), fontSize));
-    }
-
-    private void changeFontFamily(String fontFamily) {
-        Font currentFont = contentArea.getFont();
-        contentArea.setFont(new Font(fontFamily, currentFont.getStyle(), currentFont.getSize()));
+        StyledDocument doc = contentArea.getStyledDocument();
+        SimpleAttributeSet attrs = new SimpleAttributeSet();
+        StyleConstants.setFontSize(attrs, fontSize);
+        doc.setCharacterAttributes(contentArea.getSelectionStart(), contentArea.getSelectionEnd() - contentArea.getSelectionStart(), attrs, false);
     }
 
     private void openFile() {
@@ -199,13 +129,128 @@ public class Editor extends JPanel {
 
     private void saveToFile() {
         JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Text Files (*.txt)", "txt"));
         int result = fileChooser.showSaveDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
+            if (!file.getName().endsWith(".txt")) {
+                file = new File(file.getAbsolutePath() + ".txt");
+            }
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                contentArea.write(writer);
+                writer.write(contentArea.getText());
+                JOptionPane.showMessageDialog(this, "File saved successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "Error saving file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void createContextMenu() {
+        contextMenu = new JPopupMenu();
+
+        JMenuItem boldItem = new JMenuItem("Bold");
+        boldItem.addActionListener(e -> toggleBold());
+        contextMenu.add(boldItem);
+
+        JMenuItem italicItem = new JMenuItem("Italic");
+        italicItem.addActionListener(e -> toggleItalic());
+        contextMenu.add(italicItem);
+
+        JMenuItem underlineItem = new JMenuItem("Underline");
+        underlineItem.addActionListener(e -> toggleUnderline());
+        contextMenu.add(underlineItem);
+
+        contextMenu.addSeparator();
+
+        JMenuItem alignLeftItem = new JMenuItem("Align Left");
+        alignLeftItem.addActionListener(e -> alignText(SwingConstants.CENTER));
+        contextMenu.add(alignLeftItem);
+
+        JMenuItem alignCenterItem = new JMenuItem("Align Center");
+        alignCenterItem.addActionListener(e -> alignText(SwingConstants.RIGHT));
+        contextMenu.add(alignCenterItem);
+
+        JMenuItem alignRightItem = new JMenuItem("Align Right");
+        alignRightItem.addActionListener(e -> alignText(SwingConstants.LEFT));
+        contextMenu.add(alignRightItem);
+
+        contextMenu.addSeparator();
+
+        JMenuItem colorItem = new JMenuItem("Change Text Color");
+        colorItem.addActionListener(e -> changeTextColor());
+        contextMenu.add(colorItem);
+
+        contextMenu.addSeparator();
+
+        JMenuItem undoItem = new JMenuItem("Undo");
+        undoItem.addActionListener(e -> undoAction());
+        contextMenu.add(undoItem);
+
+        JMenuItem redoItem = new JMenuItem("Redo");
+        redoItem.addActionListener(e -> redoAction());
+        contextMenu.add(redoItem);
+
+        contextMenu.addSeparator();
+
+        JMenuItem openItem = new JMenuItem("Open File");
+        openItem.addActionListener(e -> openFile());
+        contextMenu.add(openItem);
+
+        JMenuItem saveItem = new JMenuItem("Save File");
+        saveItem.addActionListener(e -> saveToFile());
+        contextMenu.add(saveItem);
+
+        contextMenu.addSeparator();
+
+        JMenu fontSizeMenu = new JMenu("Font Size");
+        String[] fontSizes = {"8", "10", "12", "14", "16", "18", "20", "24", "28", "32", "36", "48", "64"};
+        for (String size : fontSizes) {
+            JMenuItem sizeItem = new JMenuItem(size);
+            sizeItem.addActionListener(e -> changeFontSize(size));
+            fontSizeMenu.add(sizeItem);
+        }
+        contextMenu.add(fontSizeMenu);
+
+        JMenuItem fontChangerItem = new JMenuItem("Font Changer");
+        fontChangerItem.addActionListener(e -> openFontChangerDialog());
+        contextMenu.add(fontChangerItem);
+
+        contextMenu.addSeparator();
+    }
+
+    private void openFontChangerDialog() {
+        String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+        JPanel panel = new JPanel(new BorderLayout());
+        JLabel previewLabel = new JLabel("Font Preview");
+        previewLabel.setFont(contentArea.getFont());
+        previewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(previewLabel, BorderLayout.CENTER);
+
+        JComboBox<String> fontComboBox = new JComboBox<>(fonts);
+        fontComboBox.setSelectedItem(contentArea.getFont().getFamily()); // Default to current font
+        fontComboBox.addActionListener(e -> {
+            String selectedFont = (String) fontComboBox.getSelectedItem();
+            if (selectedFont != null) {
+                previewLabel.setFont(new Font(selectedFont, Font.PLAIN, 16));
+            }
+        });
+        panel.add(fontComboBox, BorderLayout.NORTH);
+
+        int result = JOptionPane.showConfirmDialog(
+                this,
+                panel,
+                "Font Changer",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION) {
+            String selectedFont = (String) fontComboBox.getSelectedItem();
+            if (selectedFont != null) {
+                StyledDocument doc = contentArea.getStyledDocument();
+                SimpleAttributeSet attrs = new SimpleAttributeSet();
+                StyleConstants.setFontFamily(attrs, selectedFont);
+                doc.setCharacterAttributes(contentArea.getSelectionStart(), contentArea.getSelectionEnd() - contentArea.getSelectionStart(), attrs, false);
             }
         }
     }
