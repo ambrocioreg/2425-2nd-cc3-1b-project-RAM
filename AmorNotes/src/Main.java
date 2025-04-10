@@ -1,5 +1,3 @@
-
-
 import view.Sidebar;
 import view.SearchBar;
 import java.awt.*;
