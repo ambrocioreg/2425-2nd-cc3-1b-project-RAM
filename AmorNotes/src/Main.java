@@ -10,7 +10,6 @@ public class Main extends JFrame {
     private Sidebar sidebar;
     private SearchBar searchBar;
     private ArrayList<Card> cards;
-    private final Color LIGHT_BROWN = new Color(225, 205, 180);
 
     public Main() {
         setTitle("Amor Notes");

@@ -72,4 +72,8 @@ public class CardView extends JPanel {
     public Card getCard() {
         return card;
     }
+
+    public String getTitle() {
+        return card.getTitle();
+    }
 }

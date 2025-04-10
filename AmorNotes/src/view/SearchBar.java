@@ -58,9 +58,9 @@ public class SearchBar {
 
         JPanel cardPanel = (JPanel) parent.getContentPane().getComponent(2); // Assuming cardPanel is the 3rd component
         for (Component comp : cardPanel.getComponents()) {
-            if (comp instanceof JButton) {
-                JButton note = (JButton) comp;
-                note.setVisible(note.getText().toLowerCase().contains(query));
+            if (comp instanceof CardView) {
+                CardView cardView = (CardView) comp;
+                cardView.setVisible(cardView.getTitle().toLowerCase().contains(query));
             }
         }
     }
