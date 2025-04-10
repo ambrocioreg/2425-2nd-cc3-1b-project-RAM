@@ -1,28 +1,42 @@
 package viewmodel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class SettingsViewModel {
-    private Map<String, Object> settings;
+    private boolean toggleUIColor; // true for dark mode, false for light mode
+    private boolean sync;          // true for auto-sync enabled, false otherwise
+    private int fontSize;          // Font size setting
 
     public SettingsViewModel() {
-        settings = new HashMap<>();
         // Initialize default settings
-        settings.put("darkMode", true);
-        settings.put("fontSize", 14);
+        this.toggleUIColor = false; // Default to dark mode
+        this.sync = false;         // Default to auto-sync disabled
+        this.fontSize = 14;        // Default font size
     }
 
-    public Object getSetting(String key) {
-        return settings.getOrDefault(key, null);
+    public void enableDarkMode() {
+        toggleUIColor = true;
     }
 
-    public void updateSetting(String key, Object value) {
-        settings.put(key, value);
+    public void enableLightMode() {
+        toggleUIColor = false;
     }
 
-    public void resetSettings() {
-        settings.put("darkMode", false);
+    public void toggleAutoSync() {
+        sync = !sync;
+    }
 
+    public boolean isDarkModeEnabled() {
+        return toggleUIColor;
+    }
+
+    public boolean isAutoSyncEnabled() {
+        return sync;
+    }
+
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
     }
 }

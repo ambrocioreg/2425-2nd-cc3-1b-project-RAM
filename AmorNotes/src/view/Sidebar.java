@@ -80,11 +80,23 @@ public class Sidebar {
         JPanel settingsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
         settingsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JCheckBox darkMode = new JCheckBox("Dark Mode", (Boolean) settingsViewModel.getSetting("darkMode"));
-        darkMode.addActionListener(e -> settingsViewModel.updateSetting("darkMode", darkMode.isSelected()));
+        // Dark mode toggle
+        JCheckBox darkMode = new JCheckBox("Dark Mode", settingsViewModel.isDarkModeEnabled());
+        darkMode.addActionListener(e -> {
+            if (darkMode.isSelected()) {
+                settingsViewModel.enableDarkMode();
+            } else {
+                settingsViewModel.enableLightMode();
+            }
+        });
 
-        JSlider fontSize = new JSlider(10, 24, (Integer) settingsViewModel.getSetting("fontSize"));
-        fontSize.addChangeListener(e -> settingsViewModel.updateSetting("fontSize", fontSize.getValue()));
+        // Font size slider
+        JSlider fontSize = new JSlider(10, 24, settingsViewModel.getFontSize());
+        fontSize.addChangeListener(e -> settingsViewModel.setFontSize(fontSize.getValue()));
+
+        // Auto-sync toggle
+        JCheckBox autoSync = new JCheckBox("AutoSync", settingsViewModel.isAutoSyncEnabled());
+        autoSync.addActionListener(e -> settingsViewModel.toggleAutoSync());
 
         JButton closeButton = new JButton("Close");
         closeButton.addActionListener(e -> settingsDialog.dispose());
@@ -92,6 +104,7 @@ public class Sidebar {
         settingsPanel.add(darkMode);
         settingsPanel.add(new JLabel("Font Size:"));
         settingsPanel.add(fontSize);
+        settingsPanel.add(autoSync);
 
         settingsDialog.add(settingsPanel, BorderLayout.CENTER);
         settingsDialog.add(closeButton, BorderLayout.SOUTH);
