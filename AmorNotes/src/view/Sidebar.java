@@ -1,5 +1,6 @@
 package view;
 
+import viewmodel.SettingsViewModel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,8 +10,10 @@ public class Sidebar {
     private boolean sidebarVisible = true;
     private final Color SIDEBAR_BROWN = new Color(205, 183, 158);
     private final Color BUTTON_HOVER_COLOR = new Color(180, 160, 135);  // Hover effect color for buttons
+    private SettingsViewModel settingsViewModel;
 
     public Sidebar(JFrame parent) {
+        settingsViewModel = new SettingsViewModel();
         // Sidebar layout and styling
         sidebar = new JPanel();
         sidebar.setLayout(new BorderLayout());
@@ -77,16 +80,18 @@ public class Sidebar {
         JPanel settingsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
         settingsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Example settings options
-        JCheckBox darkMode = new JCheckBox("Dark Mode");
-        JSlider fontSize = new JSlider(10, 24, 14);
+        JCheckBox darkMode = new JCheckBox("Dark Mode", (Boolean) settingsViewModel.getSetting("darkMode"));
+        darkMode.addActionListener(e -> settingsViewModel.updateSetting("darkMode", darkMode.isSelected()));
+
+        JSlider fontSize = new JSlider(10, 24, (Integer) settingsViewModel.getSetting("fontSize"));
+        fontSize.addChangeListener(e -> settingsViewModel.updateSetting("fontSize", fontSize.getValue()));
+
         JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(e -> settingsDialog.dispose());
 
         settingsPanel.add(darkMode);
         settingsPanel.add(new JLabel("Font Size:"));
         settingsPanel.add(fontSize);
-
-        closeButton.addActionListener(e -> settingsDialog.dispose());
 
         settingsDialog.add(settingsPanel, BorderLayout.CENTER);
         settingsDialog.add(closeButton, BorderLayout.SOUTH);
