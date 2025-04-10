@@ -10,8 +10,8 @@ public class CardView extends JPanel {
     public CardView(Card card) {
         this.card = card;
         setLayout(new BorderLayout());
-        setBackground(new Color(255, 255, 255));
-        setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
+        setBackground(Color.WHITE); // White background
+        setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1)); // Medium Gray border
         setMaximumSize(new Dimension(150, 50)); // Fixed width and height
         setPreferredSize(new Dimension(150, 50)); // Fixed width and height
 

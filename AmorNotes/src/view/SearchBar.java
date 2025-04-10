@@ -11,17 +11,17 @@ public class SearchBar {
     public SearchBar(JFrame parent) {
         // Initialize the search bar with enhanced styling
         searchBar = new JTextField(SEARCH_PLACEHOLDER, 20);
-        searchBar.setForeground(Color.GRAY);
+        searchBar.setForeground(Color.BLACK); // Set text color to black
         searchBar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         searchBar.setPreferredSize(new Dimension(250, 30)); // Slightly larger for better usability
         
         // Stylish border and padding for rounded corners and subtle effects
+        searchBar.setBackground(Color.WHITE); // White background
         searchBar.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 180, 160), 1),
-            BorderFactory.createEmptyBorder(8, 10, 8, 10)  // Padding for better input space
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1), // Medium Gray border
+            BorderFactory.createEmptyBorder(8, 10, 8, 10)  // Padding
         ));
-        searchBar.setBackground(new Color(255, 255, 255, 180)); // Slightly transparent white
-        searchBar.setCaretColor(Color.BLACK); // Make the cursor visible even on light background
+        searchBar.setCaretColor(Color.BLACK); // Black cursor
 
         // Search placeholder behavior with smoother transition
         searchBar.addFocusListener(new FocusListener() {
@@ -29,14 +29,14 @@ public class SearchBar {
             public void focusGained(FocusEvent e) {
                 if (searchBar.getText().equals(SEARCH_PLACEHOLDER)) {
                     searchBar.setText("");
-                    searchBar.setForeground(Color.BLACK);
+                    searchBar.setForeground(Color.BLACK); // Ensure text remains black when focused
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
                 if (searchBar.getText().isEmpty()) {
-                    searchBar.setForeground(Color.GRAY);
+                    searchBar.setForeground(new Color(150, 150, 150)); // Gray for placeholder
                     searchBar.setText(SEARCH_PLACEHOLDER);
                 }
             }

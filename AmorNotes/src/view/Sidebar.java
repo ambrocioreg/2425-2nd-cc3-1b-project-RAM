@@ -12,8 +12,10 @@ public class Sidebar {
     private JPanel cardListPanel; // Panel to hold the cards
     private ArrayList<Card> cards; // List of cards
     private boolean sidebarVisible = true;
-    private final Color SIDEBAR_BROWN = new Color(205, 183, 158);
-    private final Color BUTTON_HOVER_COLOR = new Color(180, 160, 135);  // Hover effect color for buttons
+    private final Color SIDEBAR_BACKGROUND = new Color(240, 240, 240); // Light Gray
+    private final Color BUTTON_HOVER_COLOR = new Color(220, 220, 220); // Slightly Darker Gray
+    private final Color BUTTON_BACKGROUND = new Color(200, 200, 200); // Medium Gray
+    private final Color BORDER_COLOR = new Color(180, 180, 180); // Darker Gray for borders
     private SettingsViewModel settingsViewModel;
     private Editor editor; // Reference to the main editor
 
@@ -25,15 +27,15 @@ public class Sidebar {
         // Sidebar layout and styling
         sidebar = new JPanel();
         sidebar.setLayout(new BorderLayout());
-        sidebar.setPreferredSize(new Dimension(0, parent.getHeight())); // Initial width set to 0 (hidden)
-        sidebar.setBackground(SIDEBAR_BROWN);
+        sidebar.setPreferredSize(new Dimension(0, parent.getHeight())); // Initial width set to 0 (hidden))
+        sidebar.setBackground(SIDEBAR_BACKGROUND);
         sidebar.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, new Color(150, 130, 100)));  // Soft border
         sidebar.setVisible(false); // Sidebar is hidden by default
 
         // Card list panel
         cardListPanel = new JPanel();
         cardListPanel.setLayout(new BoxLayout(cardListPanel, BoxLayout.Y_AXIS));
-        cardListPanel.setBackground(SIDEBAR_BROWN);
+        cardListPanel.setBackground(SIDEBAR_BACKGROUND);
         JScrollPane scrollPane = new JScrollPane(cardListPanel);
         scrollPane.setBorder(null);
         sidebar.add(scrollPane, BorderLayout.CENTER);
@@ -49,16 +51,16 @@ public class Sidebar {
             }
         });
         JPanel addNotePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        addNotePanel.setBackground(SIDEBAR_BROWN);
+        addNotePanel.setBackground(SIDEBAR_BACKGROUND);
         addNotePanel.add(addNoteButton);
         sidebar.add(addNotePanel, BorderLayout.NORTH);
 
         // Settings button at the bottom of the sidebar
-        JButton settingsButton = createSidebarButton("⚙ Settings");
+        JButton settingsButton = createSidebarButton("Settings");
         settingsButton.addActionListener(e -> showSettings(parent));
 
         JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        settingsPanel.setBackground(SIDEBAR_BROWN);
+        settingsPanel.setBackground(SIDEBAR_BACKGROUND);
         settingsPanel.add(settingsButton);
         sidebar.add(settingsPanel, BorderLayout.SOUTH);
     }
@@ -66,7 +68,7 @@ public class Sidebar {
     // Add a card to the sidebar
     public void addCard(Card card) {
         JPanel cardPanel = new JPanel(new BorderLayout());
-        cardPanel.setBackground(SIDEBAR_BROWN);
+        cardPanel.setBackground(SIDEBAR_BACKGROUND);
         cardPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(150, 130, 100)));
         cardPanel.setMaximumSize(new Dimension(200, 50)); // Fixed width and height
         cardPanel.setPreferredSize(new Dimension(200, 50)); // Fixed width and height
@@ -91,6 +93,7 @@ public class Sidebar {
         cardPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                editor.saveCard(); // Save the current card's content
                 editor.loadCard(card); // Load the clicked card into the editor
             }
         });
@@ -103,14 +106,14 @@ public class Sidebar {
     // Method to create buttons with hover effects and rounded corners
     private JButton createSidebarButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(190, 170, 145)); // Slightly darker brown
+        button.setFont(new Font("Segoe UI", Font.BOLD, 16)); // Ensure font is bold and size is appropriate
+        button.setForeground(Color.BLACK); // Set text color to black for better visibility
+        button.setBackground(BUTTON_BACKGROUND); // Update button background color
         button.setOpaque(true);
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         button.setPreferredSize(new Dimension(180, 40));
-        button.setBorder(BorderFactory.createLineBorder(new Color(150, 130, 100), 1)); // Soft border
+        button.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1)); // Update button border color
         
         // Add hover effect
         button.addMouseListener(new MouseAdapter() {
@@ -121,7 +124,7 @@ public class Sidebar {
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(190, 170, 145));  // Reset to original color
+                button.setBackground(BUTTON_BACKGROUND);  // Reset to original color
             }
         });
         return button;
@@ -147,41 +150,12 @@ public class Sidebar {
         settingsDialog.setSize(300, 200);
         settingsDialog.setLayout(new BorderLayout());
 
-        JPanel settingsPanel = new JPanel(new GridLayout(4, 1, 10, 10)); // Adjusted layout to fit all components
-        settingsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        // Dark mode toggle
-        JCheckBox darkMode = new JCheckBox("Dark Mode", settingsViewModel.isDarkModeEnabled());
-        darkMode.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        darkMode.addActionListener(e -> {
-            if (darkMode.isSelected()) {
-                settingsViewModel.enableDarkMode();
-            } else {
-                settingsViewModel.enableLightMode();
-            }
-        });
-
-        // Font size slider
-        JLabel fontSizeLabel = new JLabel("Font Size:");
-        fontSizeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        JSlider fontSize = new JSlider(10, 24, settingsViewModel.getFontSize());
-        fontSize.addChangeListener(e -> settingsViewModel.setFontSize(fontSize.getValue()));
-
-        // Auto-sync toggle
-        JCheckBox autoSync = new JCheckBox("AutoSync", settingsViewModel.isAutoSyncEnabled());
-        autoSync.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        autoSync.addActionListener(e -> settingsViewModel.toggleAutoSync());
+        JPanel settingsPanel = settingsViewModel.createSettingsPanel(parent); // Delegate to SettingsViewModel
 
         // Close button
         JButton closeButton = new JButton("Close");
         closeButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         closeButton.addActionListener(e -> settingsDialog.dispose());
-
-        // Add components to the settings panel
-        settingsPanel.add(darkMode);
-        settingsPanel.add(fontSizeLabel);
-        settingsPanel.add(fontSize);
-        settingsPanel.add(autoSync);
 
         // Add panels to the dialog
         settingsDialog.add(settingsPanel, BorderLayout.CENTER);
