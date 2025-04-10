@@ -90,11 +90,23 @@ public class Sidebar {
         });
         cardPanel.add(deleteButton, BorderLayout.EAST);
 
+        // Add hover effect to indicate clickability
         cardPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                cardPanel.setBackground(BUTTON_HOVER_COLOR); // Change background on hover
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                cardPanel.setBackground(SIDEBAR_BACKGROUND); // Reset background on exit
+            }
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 editor.saveCard(); // Save the current card's content
                 editor.loadCard(card); // Load the clicked card into the editor
+                JOptionPane.showMessageDialog(cardPanel, "Card \"" + card.getTitle() + "\" selected.", "Card Clicked", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 

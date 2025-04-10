@@ -13,9 +13,12 @@ public class Main extends JFrame {
 
     public Main() {
         setTitle("Amor Notes");
-        setSize(800, 600);
+        setSize(960, 540);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
+        // Center the window on the screen
+        setLocationRelativeTo(null);
 
         settingsViewModel = new SettingsViewModel(); // Initialize SettingsViewModel
 

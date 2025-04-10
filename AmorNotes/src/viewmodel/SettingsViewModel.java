@@ -64,7 +64,7 @@ public class SettingsViewModel {
 
         // Font size input
         JLabel fontSizeLabel = new JLabel("Font Size:");
-        fontSizeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        fontSizeLabel.setFont(new Font("Segoe UI", Font.BOLD, 16)); // Increased font size and made it bold
         JTextField fontSizeInput = new JTextField(String.valueOf(getFontSize()), 5);
         fontSizeInput.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         fontSizeInput.addActionListener(e -> {
@@ -91,6 +91,14 @@ public class SettingsViewModel {
         settingsPanel.add(fontSizeInput);
         settingsPanel.add(autoSync);
 
-        return settingsPanel;
+        // Wrap the settings panel in a scrollable container
+        JScrollPane scrollPane = new JScrollPane(settingsPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JPanel container = new JPanel(new BorderLayout());
+        container.add(scrollPane, BorderLayout.CENTER);
+
+        return container;
     }
 }
